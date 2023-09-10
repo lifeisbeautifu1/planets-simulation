@@ -1,11 +1,5 @@
-import { Button } from "@/components/ui/button";
-
-function App() {
-  return (
-    <div>
-      <Button>Button</Button>
-    </div>
-  );
-}
+const App = () => {
+  return <div>to be continued...</div>;
+};
 
 export default App;
