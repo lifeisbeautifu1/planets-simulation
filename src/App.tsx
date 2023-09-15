@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 
 import { EARTH_DISTANCE_FROM_SUN } from "@/lib/constants";
 import { usePlanetsContext } from "@/contexts/PlanetsContext";
-import { usePlanets, useEuler } from "@/hooks";
+import { usePlanets, useEuler, useEulerKramer } from "@/hooks";
 
 const App = () => {
   const [canvasDimensions, setCanvasDimensions] = useState({
@@ -15,6 +15,7 @@ const App = () => {
   const [planets, setPlanets] = usePlanets(planetsAmount);
 
   const solveEuler = useEuler({ planets, deltaT, setPlanets });
+  const solveEulerKramer = useEulerKramer({ planets, deltaT, setPlanets });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -82,11 +83,11 @@ const App = () => {
 
   useEffect(() => {
     const paint = () => {
-      solveEuler();
+      solveEulerKramer();
       requestAnimationFrame(paint);
     };
     requestAnimationFrame(paint);
-  }, [canvasRef, solveEuler]);
+  }, [canvasRef, solveEulerKramer]);
 
   return (
     <div className="flex items-center justify-center">

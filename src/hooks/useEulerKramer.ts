@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import type { Planet } from "@/lib/types";
 import { G } from "@/lib/constants";
 
-const useEuler = ({
+const useEulerKramer = ({
   planets,
   setPlanets,
   deltaT,
@@ -12,7 +12,7 @@ const useEuler = ({
   deltaT: number;
   setPlanets: React.Dispatch<React.SetStateAction<Planet[]>>;
 }) => {
-  const solveEuler = useCallback(() => {
+  const solveEulerKramer = useCallback(() => {
     const updatedPlanets = [...planets];
     planets.forEach((planet, index) => {
       const { x, y, vx, vy } = planet;
@@ -25,18 +25,20 @@ const useEuler = ({
           aY += (G * p.m * (p.y - y)) / R ** 3;
         }
       });
+      const updatedVx = vx + aX * deltaT;
+      const updatedVy = vy + aY * deltaT;
       updatedPlanets[index] = {
         ...planet,
-        vx: vx + aX * deltaT,
-        vy: vy + aY * deltaT,
-        x: x + vx * deltaT,
-        y: y + vy * deltaT,
+        vx: updatedVx,
+        vy: updatedVy,
+        x: x + updatedVx * deltaT,
+        y: y + updatedVy * deltaT,
       };
     });
     setPlanets(updatedPlanets);
   }, [planets, deltaT, setPlanets]);
 
-  return solveEuler;
+  return solveEulerKramer;
 };
 
-export default useEuler;
+export default useEulerKramer;
