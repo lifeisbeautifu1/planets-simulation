@@ -16,9 +16,22 @@ const App = () => {
     height: window.innerHeight,
   });
 
-  const { deltaT, planetsAmount } = usePlanetsContext();
+  const {
+    deltaT,
+    planetsAmount,
+    simulationDuration,
+    elapsedTime,
+    setElapsedTime,
+    finishedRef,
+    clearState,
+    start,
+    clear,
+  } = usePlanetsContext();
 
-  const [planets, setPlanets] = usePlanets(planetsAmount);
+  const { planets, setPlanets, vX, vY, totalEnergy } = usePlanets({
+    planetsAmount,
+    clearState,
+  });
 
   const solveEuler = useEuler({ planets, deltaT, setPlanets });
   const solveEulerKramer = useEulerKramer({ planets, deltaT, setPlanets });
@@ -50,7 +63,7 @@ const App = () => {
         );
       });
     }
-  }, [canvasRef, canvasDimensions]);
+  }, [canvasRef, canvasDimensions, clearState]);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -60,8 +73,8 @@ const App = () => {
       const radius = 20;
 
       if (context) {
-        planets.forEach((planet, i) => {
-          requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          planets.forEach((planet, i) => {
             const { x, y } = planet;
             context.beginPath();
             context.arc(
@@ -90,17 +103,39 @@ const App = () => {
   }, [canvasRef, planets, planetsAmount, canvasDimensions]);
 
   useEffect(() => {
+    if (elapsedTime > simulationDuration && finishedRef) {
+      finishedRef.current = true;
+    }
+  }, [elapsedTime, simulationDuration, finishedRef]);
+
+  useEffect(() => {
     let idx: number;
     const paint = () => {
       solveEulerKramer();
-      idx = requestAnimationFrame(paint);
+      setElapsedTime((p) => p + deltaT);
+      if (!finishedRef.current) {
+        idx = requestAnimationFrame(paint);
+      }
     };
-    idx = requestAnimationFrame(paint);
+    idx = (!finishedRef.current && requestAnimationFrame(paint)) || 0;
     return () => cancelAnimationFrame(idx);
-  }, [canvasRef, solveEulerKramer]);
+  }, [solveEulerKramer, deltaT, setElapsedTime, elapsedTime, finishedRef]);
 
   return (
     <div className="flex items-center justify-center">
+      <div className="absolute top-0 left-0">
+        vX: {vX}
+        <br />
+        vY: {vY}
+        <br />
+        energy: {totalEnergy}
+        <br />
+        elapsed time: {elapsedTime}
+        <br />
+        <button onClick={start}>start</button>
+        <br />
+        <button onClick={clear}>clear</button>
+      </div>
       <canvas
         ref={canvasRef}
         width={canvasDimensions.width}

@@ -15,14 +15,18 @@ const useEulerKramer = ({
   const solveEulerKramer = useCallback(() => {
     const updatedPlanets = [...planets];
     planets.forEach((planet, index) => {
-      const { x, y, vx, vy } = planet;
+      const { x, y, vx, vy, m } = planet;
       let aX = 0,
-        aY = 0;
+        aY = 0,
+        potentialEnergy = 0,
+        kineticEnergy = 0;
       planets.forEach((p, j) => {
         if (j !== index) {
           const R = Math.sqrt((x - p.x) ** 2 + (y - p.y) ** 2);
           aX += (G * p.m * (p.x - x)) / R ** 3;
           aY += (G * p.m * (p.y - y)) / R ** 3;
+          potentialEnergy -= (G * p.m * m) / R;
+          kineticEnergy = (m * (G * p.m)) / R / 2;
         }
       });
       const updatedVx = vx + aX * deltaT;
@@ -33,6 +37,7 @@ const useEulerKramer = ({
         vy: updatedVy,
         x: x + updatedVx * deltaT,
         y: y + updatedVy * deltaT,
+        energy: kineticEnergy + potentialEnergy,
       };
     });
     setPlanets(updatedPlanets);

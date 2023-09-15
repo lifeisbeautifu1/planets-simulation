@@ -1,9 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { G, M, EARTH_MASS, EARTH_DISTANCE_FROM_SUN } from "@/lib/constants";
 import type { Planet } from "@/lib/types";
 
-const usePlanets = (planetsAmount: number) => {
+const usePlanets = ({
+  planetsAmount,
+  clearState,
+}: {
+  planetsAmount: number;
+  clearState: boolean;
+}) => {
   const [planets, setPlanets] = useState<Array<Planet>>(
     new Array(planetsAmount).fill(0).map((_, i) => ({
       x: EARTH_DISTANCE_FROM_SUN * i,
@@ -14,6 +20,38 @@ const usePlanets = (planetsAmount: number) => {
       energy: 0,
     }))
   );
+
+  const vX = useMemo(() => {
+    const { totalMomentum, totalMass } = planets.reduce(
+      (acc, planet) => ({
+        totalMomentum: acc.totalMomentum + planet.m * planet.vx,
+        totalMass: acc.totalMass + planet.m,
+      }),
+      {
+        totalMomentum: 0,
+        totalMass: 0,
+      }
+    );
+    return totalMomentum / totalMass;
+  }, [planets]);
+
+  const vY = useMemo(() => {
+    const { totalMomentum, totalMass } = planets.reduce(
+      (acc, planet) => ({
+        totalMomentum: acc.totalMomentum + planet.m * planet.vy,
+        totalMass: acc.totalMass + planet.m,
+      }),
+      {
+        totalMomentum: 0,
+        totalMass: 0,
+      }
+    );
+    return totalMomentum / totalMass;
+  }, [planets]);
+
+  const totalEnergy = useMemo(() => {
+    return planets.reduce((acc, planet) => acc + planet.energy, 0);
+  }, [planets]);
 
   useEffect(() => {
     setPlanets(() => {
@@ -26,9 +64,9 @@ const usePlanets = (planetsAmount: number) => {
         energy: 0,
       }));
     });
-  }, [planetsAmount]);
+  }, [planetsAmount, clearState, setPlanets]);
 
-  return [planets, setPlanets] as const;
+  return { planets, setPlanets, vX, vY, totalEnergy } as const;
 };
 
 export default usePlanets;
