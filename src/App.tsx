@@ -21,10 +21,11 @@ const App = () => {
     planetsAmount,
     simulationDuration,
     elapsedTime,
-    finishedRef,
+    finishedState,
     clearState,
     start,
     clear,
+    stop,
     dispatch,
   } = usePlanetsContext();
 
@@ -103,23 +104,23 @@ const App = () => {
   }, [canvasRef, planets, planetsAmount, canvasDimensions]);
 
   useEffect(() => {
-    if (elapsedTime > simulationDuration && finishedRef) {
-      finishedRef.current = true;
+    if (elapsedTime > simulationDuration) {
+      dispatch({ type: "TOGGLE_FINISHED_STATE" });
     }
-  }, [elapsedTime, simulationDuration, finishedRef]);
+  }, [elapsedTime, simulationDuration, finishedState, dispatch]);
 
   useEffect(() => {
     let idx: number;
     const paint = () => {
       solveEulerKramer();
       dispatch({ type: "INCREASE_ELAPSED_TIME", amount: deltaT });
-      if (!finishedRef.current) {
+      if (!finishedState) {
         idx = requestAnimationFrame(paint);
       }
     };
-    idx = (!finishedRef.current && requestAnimationFrame(paint)) || 0;
+    idx = (!finishedState && requestAnimationFrame(paint)) || 0;
     return () => cancelAnimationFrame(idx);
-  }, [solveEulerKramer, deltaT, dispatch, finishedRef, elapsedTime]);
+  }, [solveEulerKramer, deltaT, dispatch, finishedState]);
 
   return (
     <div className="flex items-center justify-center">
