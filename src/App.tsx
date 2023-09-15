@@ -21,11 +21,11 @@ const App = () => {
     planetsAmount,
     simulationDuration,
     elapsedTime,
-    setElapsedTime,
     finishedRef,
     clearState,
     start,
     clear,
+    dispatch,
   } = usePlanetsContext();
 
   const { planets, setPlanets, vX, vY, totalEnergy } = usePlanets({
@@ -112,14 +112,14 @@ const App = () => {
     let idx: number;
     const paint = () => {
       solveEulerKramer();
-      setElapsedTime((p) => p + deltaT);
+      dispatch({ type: "INCREASE_ELAPSED_TIME", amount: deltaT });
       if (!finishedRef.current) {
         idx = requestAnimationFrame(paint);
       }
     };
     idx = (!finishedRef.current && requestAnimationFrame(paint)) || 0;
     return () => cancelAnimationFrame(idx);
-  }, [solveEulerKramer, deltaT, setElapsedTime, elapsedTime, finishedRef]);
+  }, [solveEulerKramer, deltaT, dispatch, finishedRef, elapsedTime]);
 
   return (
     <div className="flex items-center justify-center">
@@ -135,6 +135,8 @@ const App = () => {
         <button onClick={start}>start</button>
         <br />
         <button onClick={clear}>clear</button>
+        <br />
+        <button onClick={stop}>stop</button>
       </div>
       <canvas
         ref={canvasRef}

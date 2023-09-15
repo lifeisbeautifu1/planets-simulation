@@ -1,82 +1,131 @@
 import {
   createContext,
   useContext,
-  useState,
   useRef,
   useCallback,
+  useReducer,
 } from "react";
+
+interface IPlanetsState {
+  deltaT: number;
+  planetsAmount: number;
+  simulationDuration: number;
+  elapsedTime: number;
+  clearState: boolean;
+}
+
+type PlanetsAction =
+  | { type: "SET_DELTAT"; deltaT: number }
+  | { type: "SET_PLANETS_AMOUNT"; planetsAmount: number }
+  | { type: "SET_SIMULATION_DURATION"; simulationDuration: number }
+  | { type: "RESET_ELAPSED_TIME" }
+  | { type: "INCREASE_ELAPSED_TIME"; amount: number }
+  | { type: "RESET_CLEAR_STATE" };
+
+const planetsReducer = (state: IPlanetsState, action: PlanetsAction) => {
+  switch (action.type) {
+    case "SET_DELTAT": {
+      return {
+        ...state,
+        deltaT: action.deltaT,
+      };
+    }
+    case "SET_PLANETS_AMOUNT": {
+      return {
+        ...state,
+        planetsAmount: action.planetsAmount,
+      };
+    }
+    case "SET_SIMULATION_DURATION": {
+      return {
+        ...state,
+        simulationDuration: action.simulationDuration,
+      };
+    }
+    case "RESET_ELAPSED_TIME": {
+      return {
+        ...state,
+        elapsedTime: 0,
+      };
+    }
+    case "INCREASE_ELAPSED_TIME": {
+      return {
+        ...state,
+        elapsedTime: state.elapsedTime + action.amount,
+      };
+    }
+    case "RESET_CLEAR_STATE": {
+      return {
+        ...state,
+        clearState: !state.clearState,
+      };
+    }
+    default:
+      return state;
+  }
+};
 
 interface IPlanetsContext {
   deltaT: number;
-  setDeltaT: React.Dispatch<React.SetStateAction<number>>;
   planetsAmount: number;
-  setPlanetsAmount: React.Dispatch<React.SetStateAction<number>>;
   simulationDuration: number;
-  setSimulationDuration: React.Dispatch<React.SetStateAction<number>>;
   elapsedTime: number;
-  setElapsedTime: React.Dispatch<React.SetStateAction<number>>;
+  clearState: boolean;
   finishedRef: React.MutableRefObject<boolean>;
   start: () => void;
   clear: () => void;
-  clearState: boolean;
-  setClearState: React.Dispatch<React.SetStateAction<boolean>>;
+  stop: () => void;
+  dispatch: React.Dispatch<PlanetsAction>;
 }
 
 const PlanetsContext = createContext<IPlanetsContext>({
-  deltaT: 60 * 60 * 24 * 7,
-  setDeltaT: () => null,
+  deltaT: 60 * 60 * 24,
   planetsAmount: 3,
-  setPlanetsAmount: () => null,
-  simulationDuration: 60 * 60 * 24 * 365,
-  setSimulationDuration: () => null,
+  simulationDuration: 60 * 60 * 24 * 365 * 200,
   elapsedTime: 0,
-  setElapsedTime: () => null,
   finishedRef: { current: false },
+  clearState: false,
   start: () => null,
   clear: () => null,
-  clearState: false,
-  setClearState: () => null,
+  stop: () => null,
+  dispatch: () => null,
 });
 
 const PlanetsContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [deltaT, setDeltaT] = useState(60 * 60 * 24 * 7);
-  const [simulationDuration, setSimulationDuration] = useState(
-    60 * 60 * 24 * 365
-  );
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [planetsAmount, setPlanetsAmount] = useState(3);
-
-  const [clearState, setClearState] = useState(false);
+  const [planetsState, dispatch] = useReducer(planetsReducer, {
+    deltaT: 60 * 60 * 24,
+    planetsAmount: 3,
+    simulationDuration: 60 * 60 * 24 * 365 * 200,
+    elapsedTime: 0,
+    clearState: false,
+  });
 
   const finishedRef = useRef(false);
 
   const start = useCallback(() => {
-    setElapsedTime(0);
+    dispatch({ type: "RESET_ELAPSED_TIME" });
     finishedRef.current = false;
-  }, [finishedRef]);
+  }, [finishedRef, dispatch]);
+
+  const stop = useCallback(() => {
+    finishedRef.current = true;
+  }, [finishedRef, dispatch]);
 
   const clear = useCallback(() => {
-    setClearState((pv) => !pv);
-  }, []);
+    dispatch({ type: "RESET_CLEAR_STATE" });
+  }, [dispatch]);
 
   return (
     <PlanetsContext.Provider
       value={{
-        deltaT,
-        setDeltaT,
-        planetsAmount,
-        setPlanetsAmount,
-        simulationDuration,
-        setSimulationDuration,
-        elapsedTime,
-        setElapsedTime,
+        ...planetsState,
         finishedRef,
-        clearState,
-        setClearState,
         start,
         clear,
+        dispatch,
+        stop,
       }}
     >
       {children}
