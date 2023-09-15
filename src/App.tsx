@@ -1,71 +1,47 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 
-import { G, M, EARTH_MASS, EARTH_DISTANCE_FROM_SUN } from "@/lib/constants";
-import type { Planet } from "@/lib/types";
+import { EARTH_DISTANCE_FROM_SUN } from "@/lib/constants";
+import { usePlanetsContext } from "@/contexts/PlanetsContext";
+import { usePlanets, useEuler } from "@/hooks";
 
 const App = () => {
-  const [planets, setPlanets] = useState<Array<Planet>>(
-    new Array(3).fill(0).map((_, i) => ({
-      x: EARTH_DISTANCE_FROM_SUN * i,
-      y: 0,
-      vx: 0,
-      vy: i === 0 ? 0 : Math.sqrt((G * M) / EARTH_DISTANCE_FROM_SUN / i),
-      m: i === 0 ? M : EARTH_MASS * i,
-      energy: 0,
-    }))
-  );
   const [canvasDimensions, setCanvasDimensions] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const [planetsAmount, setPlanetsAmount] = useState(3);
 
-  const [t, setT] = useState(60 * 60 * 24 * 7);
+  const { deltaT, planetsAmount } = usePlanetsContext();
+
+  const [planets, setPlanets] = usePlanets(planetsAmount);
+
+  const solveEuler = useEuler({ planets, deltaT, setPlanets });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const solveEuler = useCallback(() => {
-    const updatedPlanets = [...planets];
-    planets.forEach((planet, index) => {
-      const { x, y, vx, vy } = planet;
-      let aX = 0,
-        aY = 0;
-      planets.forEach((p, j) => {
-        if (j !== index) {
-          const R = Math.sqrt((x - p.x) ** 2 + (y - p.y) ** 2);
-          aX += (G * p.m * (p.x - x)) / R ** 3;
-          aY += (G * p.m * (p.y - y)) / R ** 3;
-        }
+  useEffect(() => {
+    const setDimensions = () => {
+      setCanvasDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
       });
-      const updatedVx = vx + aX * t;
-      const updatedVy = vy + aY * t;
-      updatedPlanets[index] = {
-        ...planet,
-        vx: updatedVx,
-        vy: updatedVy,
-        x: x + updatedVx * t,
-        y: y + updatedVy * t,
-      };
-    });
-    setPlanets(updatedPlanets);
-  }, [planets, t]);
+    };
+    window.addEventListener("resize", setDimensions);
+    return () => window.removeEventListener("resize", setDimensions);
+  }, []);
 
   useEffect(() => {
-    setPlanets(() => {
-      return new Array(planetsAmount).fill(0).map((_, i) => ({
-        x: EARTH_DISTANCE_FROM_SUN * i,
-        y: 0,
-        vx: 0,
-        vy: i === 0 ? 0 : Math.sqrt((G * M) / EARTH_DISTANCE_FROM_SUN / i),
-        m: i === 0 ? M : EARTH_MASS * i,
-        energy: 0,
-      }));
-    });
     if (canvasRef.current) {
       const context = canvasRef.current.getContext("2d");
-      context?.clearRect(0, 0, canvasDimensions.width, canvasDimensions.height);
+      requestAnimationFrame(() => {
+        context?.clearRect(
+          0,
+          0,
+          canvasDimensions.width,
+          canvasDimensions.height
+        );
+      });
     }
-  }, [planetsAmount, canvasRef, canvasDimensions]);
+  }, [canvasRef, canvasDimensions]);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -83,11 +59,11 @@ const App = () => {
               centerX +
                 (x * canvasDimensions.width) /
                   EARTH_DISTANCE_FROM_SUN /
-                  (planetsAmount * 3),
+                  (planetsAmount * 1.75),
               centerY +
                 (y * canvasDimensions.height) /
                   EARTH_DISTANCE_FROM_SUN /
-                  (planetsAmount * 3),
+                  (planetsAmount * 1.75),
               i === 0 ? radius * 2 : radius,
               0,
               2 * Math.PI,
@@ -105,8 +81,11 @@ const App = () => {
   }, [canvasRef, planets, planetsAmount, canvasDimensions]);
 
   useEffect(() => {
-    const interval = setInterval(() => solveEuler(), 33);
-    return () => clearInterval(interval);
+    const paint = () => {
+      solveEuler();
+      requestAnimationFrame(paint);
+    };
+    requestAnimationFrame(paint);
   }, [canvasRef, solveEuler]);
 
   return (
@@ -115,7 +94,7 @@ const App = () => {
         ref={canvasRef}
         width={canvasDimensions.width}
         height={canvasDimensions.height}
-      ></canvas>
+      />
     </div>
   );
 };
