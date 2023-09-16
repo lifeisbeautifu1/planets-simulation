@@ -1,4 +1,12 @@
-import { createContext, useContext, useCallback, useReducer } from "react";
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useReducer,
+  useEffect,
+} from "react";
+
+import type { SelectedMethod } from "@/lib/types";
 
 interface IPlanetsState {
   deltaT: number;
@@ -7,6 +15,7 @@ interface IPlanetsState {
   elapsedTime: number;
   clearState: boolean;
   finishedState: boolean;
+  selectedMethod: SelectedMethod;
 }
 
 type PlanetsAction =
@@ -16,7 +25,9 @@ type PlanetsAction =
   | { type: "RESET_ELAPSED_TIME" }
   | { type: "INCREASE_ELAPSED_TIME"; amount: number }
   | { type: "TOGGLE_CLEAR_STATE" }
-  | { type: "TOGGLE_FINISHED_STATE" };
+  | { type: "TOGGLE_FINISHED_STATE" }
+  | { type: "SET_SELECTED_METHOD"; method: SelectedMethod }
+  | { type: "RESET" };
 
 const planetsReducer = (state: IPlanetsState, action: PlanetsAction) => {
   switch (action.type) {
@@ -62,6 +73,20 @@ const planetsReducer = (state: IPlanetsState, action: PlanetsAction) => {
         finishedState: !state.finishedState,
       };
     }
+    case "SET_SELECTED_METHOD": {
+      return {
+        ...state,
+        selectedMethod: action.method,
+      };
+    }
+    case "RESET": {
+      return {
+        ...state,
+        clearState: !state.clearState,
+        elapsedTime: 0,
+        finishedState: true,
+      };
+    }
     default:
       return state;
   }
@@ -74,6 +99,7 @@ interface IPlanetsContext {
   elapsedTime: number;
   clearState: boolean;
   finishedState: boolean;
+  selectedMethod: SelectedMethod;
   start: () => void;
   clear: () => void;
   stop: () => void;
@@ -87,6 +113,7 @@ const PlanetsContext = createContext<IPlanetsContext>({
   elapsedTime: 0,
   finishedState: false,
   clearState: false,
+  selectedMethod: "Euler-Kramer",
   start: () => null,
   clear: () => null,
   stop: () => null,
@@ -103,7 +130,18 @@ const PlanetsContextProvider: React.FC<{ children: React.ReactNode }> = ({
     elapsedTime: 0,
     clearState: false,
     finishedState: false,
+    selectedMethod: "Euler-Kramer",
   });
+
+  useEffect(() => {
+    if (planetsState.elapsedTime > planetsState.simulationDuration) {
+      dispatch({ type: "TOGGLE_FINISHED_STATE" });
+    }
+  }, [planetsState.elapsedTime, planetsState.simulationDuration, dispatch]);
+
+  useEffect(() => {
+    dispatch({ type: "RESET" });
+  }, [planetsState.selectedMethod, dispatch]);
 
   const start = useCallback(() => {
     dispatch({ type: "RESET_ELAPSED_TIME" });

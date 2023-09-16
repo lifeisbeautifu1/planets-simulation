@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 
 import { EARTH_DISTANCE_FROM_SUN } from "@/lib/constants";
+import { ContextMenu } from "@/components/ui";
 import { usePlanetsContext } from "@/contexts/PlanetsContext";
 import {
   usePlanets,
@@ -19,13 +20,10 @@ const App = () => {
   const {
     deltaT,
     planetsAmount,
-    simulationDuration,
     elapsedTime,
     finishedState,
     clearState,
-    start,
-    clear,
-    stop,
+    selectedMethod,
     dispatch,
   } = usePlanetsContext();
 
@@ -104,15 +102,30 @@ const App = () => {
   }, [canvasRef, planets, planetsAmount, canvasDimensions]);
 
   useEffect(() => {
-    if (elapsedTime > simulationDuration) {
-      dispatch({ type: "TOGGLE_FINISHED_STATE" });
-    }
-  }, [elapsedTime, simulationDuration, finishedState, dispatch]);
-
-  useEffect(() => {
     let idx: number;
     const paint = () => {
-      solveEulerKramer();
+      switch (selectedMethod) {
+        case "Euler-Kramer":
+          {
+            solveEulerKramer();
+          }
+          break;
+        case "Euler":
+          {
+            solveEuler();
+          }
+          break;
+        case "Verlet":
+          {
+            solveVerlet();
+          }
+          break;
+        case "Beeman":
+          {
+            solveBeeman();
+          }
+          break;
+      }
       dispatch({ type: "INCREASE_ELAPSED_TIME", amount: deltaT });
       if (!finishedState) {
         idx = requestAnimationFrame(paint);
@@ -120,10 +133,20 @@ const App = () => {
     };
     idx = (!finishedState && requestAnimationFrame(paint)) || 0;
     return () => cancelAnimationFrame(idx);
-  }, [solveEulerKramer, deltaT, dispatch, finishedState]);
+  }, [
+    solveEulerKramer,
+    solveEuler,
+    solveVerlet,
+    solveBeeman,
+    deltaT,
+    dispatch,
+    finishedState,
+    selectedMethod,
+  ]);
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center bg-black">
+      <ContextMenu />
       <div className="absolute top-0 left-0">
         vX: {vX}
         <br />
@@ -133,11 +156,7 @@ const App = () => {
         <br />
         elapsed time: {elapsedTime}
         <br />
-        <button onClick={start}>start</button>
-        <br />
-        <button onClick={clear}>clear</button>
-        <br />
-        <button onClick={stop}>stop</button>
+        selected method: {selectedMethod}
       </div>
       <canvas
         ref={canvasRef}
