@@ -2,7 +2,6 @@ import { useCallback } from "react";
 
 import {
   ContextMenu,
-  ContextMenuCheckboxItem,
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuLabel,

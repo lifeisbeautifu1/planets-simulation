@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-import { EARTH_DISTANCE_FROM_SUN } from "@/lib/constants";
+import { EARTH_DISTANCE_FROM_SUN, PLANET_COLORS } from "@/lib/constants";
 import { ContextMenu } from "@/components/ui";
 import { usePlanetsContext } from "@/contexts/PlanetsContext";
 import {
@@ -25,6 +25,7 @@ const App = () => {
     clearState,
     selectedMethod,
     dispatch,
+    start,
   } = usePlanetsContext();
 
   const { planets, setPlanets, vX, vY, totalEnergy } = usePlanets({
@@ -69,10 +70,16 @@ const App = () => {
       const context = canvasRef.current.getContext("2d");
       const centerX = canvasDimensions.width / 2;
       const centerY = canvasDimensions.height / 2;
-      const radius = 20;
-
+      const radius = 15;
       if (context) {
         requestAnimationFrame(() => {
+          context.fillStyle = "rgba(0, 0, 0, 0.2)";
+          context.fillRect(
+            0,
+            0,
+            canvasDimensions.width,
+            canvasDimensions.height
+          );
           planets.forEach((planet, i) => {
             const { x, y } = planet;
             context.beginPath();
@@ -85,16 +92,14 @@ const App = () => {
                 (y * canvasDimensions.height) /
                   EARTH_DISTANCE_FROM_SUN /
                   (planetsAmount * 1.75),
-              i === 0 ? radius * 2 : radius,
+              i === 0 ? 30 : radius,
               0,
               2 * Math.PI,
-              false
+              true
             );
-            context.fillStyle = "yellow";
+            context.closePath();
+            context.fillStyle = PLANET_COLORS[i % PLANET_COLORS.length];
             context.fill();
-            context.lineWidth = 5;
-            context.strokeStyle = "orange";
-            context.stroke();
           });
         });
       }
@@ -144,8 +149,13 @@ const App = () => {
     selectedMethod,
   ]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => start());
+    return () => clearTimeout(timer);
+  }, [start]);
+
   return (
-    <div className="flex items-center justify-center bg-black">
+    <div className="flex items-center justify-center">
       <ContextMenu />
       <div className="absolute top-0 left-0">
         vX: {vX}
