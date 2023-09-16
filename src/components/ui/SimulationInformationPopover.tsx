@@ -6,8 +6,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/Card";
-import { Progress } from "@/components/ui/Progress";
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { X } from "lucide-react";
 
 import { usePlanetsContext, useSimulationInformationContext } from "@/contexts";
