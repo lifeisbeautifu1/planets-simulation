@@ -126,7 +126,7 @@ const PlanetsContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const [planetsState, dispatch] = useReducer(planetsReducer, {
     deltaT: 60 * 60 * 24,
     planetsAmount: 3,
-    simulationDuration: 60 * 60 * 24 * 365 * 200,
+    simulationDuration: 60 * 60 * 24 * 365 * 20,
     elapsedTime: 0,
     clearState: false,
     finishedState: false,

@@ -18,14 +18,18 @@ const useBeeman = ({
   const solveBeeman = useCallback(() => {
     const updatedPlanets = [...planets];
     planets.forEach((planet, index) => {
-      const { x, y, vx, vy } = planet;
+      const { x, y, vx, vy, m } = planet;
       let accX = 0,
-        accY = 0;
+        accY = 0,
+        potentialEnergy = 0,
+        kineticEnergy = 0;
       planets.forEach((p, j) => {
         if (j !== index) {
           const R = Math.sqrt((x - p.x) ** 2 + (y - p.y) ** 2);
           accX += (G * p.m * (p.x - x)) / R ** 3;
           accY += (G * p.m * (p.y - y)) / R ** 3;
+          potentialEnergy -= (G * p.m * m) / R;
+          kineticEnergy = (m * (G * p.m)) / R / 2;
         }
       });
       if (aX.current[index].length >= 2) {
@@ -63,6 +67,7 @@ const useBeeman = ({
           vy: updatedVy,
           x: updatedX,
           y: updatedY,
+          energy: kineticEnergy + potentialEnergy,
         };
       } else {
         const updatedVx = vx + accX * deltaT;
@@ -75,6 +80,7 @@ const useBeeman = ({
           vy: updatedVy,
           x: updatedX,
           y: updatedY,
+          energy: kineticEnergy + potentialEnergy,
         };
       }
       aX.current[index].push(accX);

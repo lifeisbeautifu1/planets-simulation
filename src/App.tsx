@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 
 import { EARTH_DISTANCE_FROM_SUN, PLANET_COLORS } from "@/lib/constants";
-import { ContextMenu } from "@/components/ui";
-import { usePlanetsContext } from "@/contexts/PlanetsContext";
+import { ContextMenu, SimulationInformationPopover } from "@/components/ui";
+import { usePlanetsContext } from "@/contexts";
 import {
   usePlanets,
   useEuler,
@@ -20,7 +20,6 @@ const App = () => {
   const {
     deltaT,
     planetsAmount,
-    elapsedTime,
     finishedState,
     clearState,
     selectedMethod,
@@ -28,7 +27,7 @@ const App = () => {
     start,
   } = usePlanetsContext();
 
-  const { planets, setPlanets, vX, vY, totalEnergy } = usePlanets({
+  const { planets, setPlanets, ...infoPopoverProps } = usePlanets({
     planetsAmount,
     clearState,
   });
@@ -155,19 +154,9 @@ const App = () => {
   }, [start]);
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center font-primary">
       <ContextMenu />
-      <div className="absolute top-0 left-0">
-        vX: {vX}
-        <br />
-        vY: {vY}
-        <br />
-        energy: {totalEnergy}
-        <br />
-        elapsed time: {elapsedTime}
-        <br />
-        selected method: {selectedMethod}
-      </div>
+      <SimulationInformationPopover {...infoPopoverProps} />
       <canvas
         ref={canvasRef}
         width={canvasDimensions.width}

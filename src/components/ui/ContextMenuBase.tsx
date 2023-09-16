@@ -14,12 +14,14 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/ContextMenu";
-import { usePlanetsContext } from "@/contexts";
+import { usePlanetsContext, useSimulationInformationContext } from "@/contexts";
 import { SelectedMethod } from "@/lib/types";
 
 export const ContextMenuBase = () => {
   const { start, stop, clear, finishedState, dispatch, selectedMethod } =
     usePlanetsContext();
+
+  const { openSimulationInformation } = useSimulationInformationContext();
 
   const handleRadioClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (e) => {
@@ -52,14 +54,11 @@ export const ContextMenuBase = () => {
         <ContextMenuSub>
           <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
-            <ContextMenuItem>
-              Save Page As...
+            <ContextMenuItem onClick={openSimulationInformation}>
+              Simulation Information
               <ContextMenuShortcut>⇧⌘S</ContextMenuShortcut>
             </ContextMenuItem>
-            <ContextMenuItem>Create Shortcut...</ContextMenuItem>
-            <ContextMenuItem>Name Window...</ContextMenuItem>
-            <ContextMenuSeparator />
-            <ContextMenuItem>Developer Tools</ContextMenuItem>
+            <ContextMenuItem>Simulation configuration</ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSeparator />
