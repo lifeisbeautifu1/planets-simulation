@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
+import { useToast } from "@/components/ui/use-toast";
 import {
   EARTH_DISTANCE_FROM_SUN,
   PLANET_COLORS,
@@ -41,6 +42,20 @@ const App = () => {
   });
 
   const { renderingType } = useVisualContext();
+
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const timer = setTimeout(
+      () =>
+        toast({
+          title: "Tip",
+          description: "Right click to change simulation configuration",
+        }),
+      5000
+    );
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   const solveEuler = useEuler({ planets, deltaT, setPlanets });
   const solveEulerKramer = useEulerKramer({ planets, deltaT, setPlanets });

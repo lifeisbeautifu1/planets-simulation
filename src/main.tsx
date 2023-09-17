@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "@/App.tsx";
+import { Toaster } from "@/components/ui/toaster";
 import {
   PlanetsContextProvider,
   SimulationInformationContextProvider,
@@ -16,6 +17,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <SimulationInformationContextProvider>
           <VisualContextProvider>
             <App />
+            <Toaster />
           </VisualContextProvider>
         </SimulationInformationContextProvider>
       </PlanetsContextProvider>
