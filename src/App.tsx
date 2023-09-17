@@ -1,10 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-import {
-  EARTH_DISTANCE_FROM_SUN,
-  PLANET_COLORS,
-  STARS_AMOUNT,
-} from "@/lib/constants";
+import { EARTH_DISTANCE_FROM_SUN, STARS_AMOUNT } from "@/lib/constants";
 import { Star } from "@/lib/utils";
 import { ContextMenu, SimulationInformationPopover } from "@/components/ui";
 import { usePlanetsContext } from "@/contexts";
@@ -16,6 +12,17 @@ import {
   useBeeman,
 } from "@/hooks";
 import SunImage from "@/assets/img/sun.png";
+import EarthImage from "@/assets/img/earth.png";
+import MarsImage from "@/assets/img/mars.png";
+
+const Sun = new Image();
+Sun.src = SunImage;
+const Earth = new Image();
+Earth.src = EarthImage;
+const Mars = new Image();
+Mars.src = MarsImage;
+
+const planetsImages = [Sun, Earth, Mars];
 
 const App = () => {
   const [canvasDimensions, setCanvasDimensions] = useState({
@@ -92,7 +99,6 @@ const App = () => {
       const context = canvasRef.current.getContext("2d");
       const centerX = canvasDimensions.width / 2;
       const centerY = canvasDimensions.height / 2;
-      const radius = 10;
       if (context) {
         requestAnimationFrame(() => {
           context.clearRect(
@@ -106,24 +112,22 @@ const App = () => {
           );
           planets.forEach((planet, i) => {
             const { x, y } = planet;
-            context.beginPath();
-            context.arc(
+            const imageSize = i === 0 ? 200 : 50;
+            context.drawImage(
+              planetsImages[i],
               centerX +
                 (x * canvasDimensions.width) /
                   EARTH_DISTANCE_FROM_SUN /
-                  (planetsAmount * 1.75),
+                  (planetsAmount * 1.75) -
+                imageSize / 2,
               centerY +
                 (y * canvasDimensions.height) /
                   EARTH_DISTANCE_FROM_SUN /
-                  (planetsAmount * 1.75),
-              i === 0 ? 30 : radius,
-              0,
-              2 * Math.PI,
-              true
+                  (planetsAmount * 1.75) -
+                imageSize / 2,
+              imageSize,
+              imageSize
             );
-            context.closePath();
-            context.fillStyle = PLANET_COLORS[i % PLANET_COLORS.length];
-            context.fill();
           });
         });
       }
