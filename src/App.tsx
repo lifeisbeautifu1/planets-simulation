@@ -1,9 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 
-import { EARTH_DISTANCE_FROM_SUN, STARS_AMOUNT } from "@/lib/constants";
+import {
+  EARTH_DISTANCE_FROM_SUN,
+  PLANET_COLORS,
+  STARS_AMOUNT,
+} from "@/lib/constants";
 import { Star } from "@/lib/utils";
 import { ContextMenu, SimulationInformationPopover } from "@/components/ui";
-import { usePlanetsContext } from "@/contexts";
+import { usePlanetsContext, useVisualContext } from "@/contexts";
 import {
   usePlanets,
   useEuler,
@@ -11,18 +15,7 @@ import {
   useVerlet,
   useBeeman,
 } from "@/hooks";
-import SunImage from "@/assets/img/sun.png";
-import EarthImage from "@/assets/img/earth.png";
-import MarsImage from "@/assets/img/mars.png";
-
-const Sun = new Image();
-Sun.src = SunImage;
-const Earth = new Image();
-Earth.src = EarthImage;
-const Mars = new Image();
-Mars.src = MarsImage;
-
-const planetsImages = [Sun, Earth, Mars];
+import { PlanetsImages } from "@/lib/images";
 
 const App = () => {
   const [canvasDimensions, setCanvasDimensions] = useState({
@@ -46,6 +39,8 @@ const App = () => {
     planetsAmount,
     clearState,
   });
+
+  const { renderingType } = useVisualContext();
 
   const solveEuler = useEuler({ planets, deltaT, setPlanets });
   const solveEulerKramer = useEulerKramer({ planets, deltaT, setPlanets });
@@ -99,40 +94,83 @@ const App = () => {
       const context = canvasRef.current.getContext("2d");
       const centerX = canvasDimensions.width / 2;
       const centerY = canvasDimensions.height / 2;
+      const radius = 10;
       if (context) {
         requestAnimationFrame(() => {
-          context.clearRect(
-            0,
-            0,
-            canvasDimensions.width,
-            canvasDimensions.height
-          );
-          stars.forEach((star) =>
-            star.draw(context, canvasDimensions.width, canvasDimensions.height)
-          );
+          if (renderingType === "planets") {
+            context.clearRect(
+              0,
+              0,
+              canvasDimensions.width,
+              canvasDimensions.height
+            );
+            stars.forEach((star) =>
+              star.draw(
+                context,
+                canvasDimensions.width,
+                canvasDimensions.height
+              )
+            );
+          } else if (renderingType === "circles") {
+            context.fillStyle = "rgba(0, 0, 0, 0.2)";
+            context.fillRect(
+              0,
+              0,
+              canvasDimensions.width,
+              canvasDimensions.height
+            );
+          }
           planets.forEach((planet, i) => {
             const { x, y } = planet;
-            const imageSize = i === 0 ? 200 : 50;
-            context.drawImage(
-              planetsImages[i],
-              centerX +
-                (x * canvasDimensions.width) /
-                  EARTH_DISTANCE_FROM_SUN /
-                  (planetsAmount * 1.75) -
-                imageSize / 2,
-              centerY +
-                (y * canvasDimensions.height) /
-                  EARTH_DISTANCE_FROM_SUN /
-                  (planetsAmount * 1.75) -
-                imageSize / 2,
-              imageSize,
-              imageSize
-            );
+            if (renderingType === "planets") {
+              const imageSize = i === 0 ? 200 : 50;
+              context.drawImage(
+                PlanetsImages[i % PlanetsImages.length],
+                centerX +
+                  (x * canvasDimensions.width) /
+                    EARTH_DISTANCE_FROM_SUN /
+                    (planetsAmount * 1.75) -
+                  imageSize / 2,
+                centerY +
+                  (y * canvasDimensions.height) /
+                    EARTH_DISTANCE_FROM_SUN /
+                    (planetsAmount * 1.75) -
+                  imageSize / 2,
+                imageSize,
+                imageSize
+              );
+            } else {
+              context.beginPath();
+              context.arc(
+                centerX +
+                  (x * canvasDimensions.width) /
+                    EARTH_DISTANCE_FROM_SUN /
+                    (planetsAmount * 1.75),
+                centerY +
+                  (y * canvasDimensions.height) /
+                    EARTH_DISTANCE_FROM_SUN /
+                    (planetsAmount * 1.75),
+                i === 0 ? 30 : radius,
+                0,
+                2 * Math.PI,
+                true
+              );
+              context.closePath();
+              context.fillStyle = PLANET_COLORS[i % PLANET_COLORS.length];
+              context.fill();
+            }
           });
         });
       }
     }
-  }, [canvasRef, planets, planetsAmount, canvasDimensions, stars]);
+  }, [
+    canvasRef,
+    planets,
+    planetsAmount,
+    canvasDimensions,
+    stars,
+    renderingType,
+  ]);
 
   useEffect(() => {
     let idx: number;

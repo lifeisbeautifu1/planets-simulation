@@ -14,8 +14,12 @@ import {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "@/components/ui/ContextMenu";
-import { usePlanetsContext, useSimulationInformationContext } from "@/contexts";
-import { SelectedMethod } from "@/lib/types";
+import {
+  usePlanetsContext,
+  useSimulationInformationContext,
+  useVisualContext,
+} from "@/contexts";
+import { SelectedMethod, RenderingType } from "@/lib/types";
 
 export const ContextMenuBase = () => {
   const { start, stop, clear, finishedState, dispatch, selectedMethod } =
@@ -23,7 +27,20 @@ export const ContextMenuBase = () => {
 
   const { openSimulationInformation } = useSimulationInformationContext();
 
-  const handleRadioClick = useCallback<React.MouseEventHandler<HTMLDivElement>>(
+  const { renderingType, setRenderingType } = useVisualContext();
+
+  const handleRenderingTypeChange = useCallback<
+    React.MouseEventHandler<HTMLDivElement>
+  >(
+    (e) => {
+      setRenderingType(e.currentTarget.dataset.methodName as RenderingType);
+    },
+    [setRenderingType]
+  );
+
+  const handleSolvingMethodChange = useCallback<
+    React.MouseEventHandler<HTMLDivElement>
+  >(
     (e) => {
       dispatch({
         type: "SET_SELECTED_METHOD",
@@ -61,32 +78,58 @@ export const ContextMenuBase = () => {
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSeparator />
+        <ContextMenuRadioGroup value={renderingType}>
+          <ContextMenuLabel inset>Visual</ContextMenuLabel>
+          <ContextMenuSeparator />
+          <ContextMenuRadioItem
+            onClick={handleRenderingTypeChange}
+            data-method-name="planets"
+            value="planets"
+          >
+            Planets
+          </ContextMenuRadioItem>
+          <ContextMenuRadioItem
+            onClick={handleRenderingTypeChange}
+            data-method-name="circles"
+            value="circles"
+          >
+            Circles
+          </ContextMenuRadioItem>
+          <ContextMenuRadioItem
+            onClick={handleRenderingTypeChange}
+            data-method-name="circles with traces"
+            value="circles with traces"
+          >
+            Circles with traces
+          </ContextMenuRadioItem>
+          <ContextMenuSeparator />
+        </ContextMenuRadioGroup>
         <ContextMenuRadioGroup value={selectedMethod}>
           <ContextMenuLabel inset>Methods</ContextMenuLabel>
           <ContextMenuSeparator />
           <ContextMenuRadioItem
-            onClick={handleRadioClick}
+            onClick={handleSolvingMethodChange}
             data-method-name="Euler"
             value="Euler"
           >
             Euler
           </ContextMenuRadioItem>
           <ContextMenuRadioItem
-            onClick={handleRadioClick}
+            onClick={handleSolvingMethodChange}
             data-method-name="Euler-Kramer"
             value="Euler-Kramer"
           >
             Euler-Kramer
           </ContextMenuRadioItem>
           <ContextMenuRadioItem
-            onClick={handleRadioClick}
+            onClick={handleSolvingMethodChange}
             data-method-name="Verlet"
             value="Verlet"
           >
             Verlet
           </ContextMenuRadioItem>
           <ContextMenuRadioItem
-            onClick={handleRadioClick}
+            onClick={handleSolvingMethodChange}
             data-method-name="Beeman"
             value="Beeman"
           >

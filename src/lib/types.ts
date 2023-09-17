@@ -8,3 +8,5 @@ export interface Planet {
 }
 
 export type SelectedMethod = "Euler" | "Euler-Kramer" | "Verlet" | "Beeman";
+
+export type RenderingType = "planets" | "circles" | "circles with traces";

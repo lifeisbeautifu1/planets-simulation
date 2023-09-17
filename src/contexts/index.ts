@@ -5,4 +5,8 @@ export {
 export {
   default as SimulationInformationContextProvider,
   useSimulationInformationContext,
-} from "./SimulationInformation";
+} from "./SimulationInformationContext";
+export {
+  default as VisualContextProvider,
+  useVisualContext,
+} from "./VisualContext";
