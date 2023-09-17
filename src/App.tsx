@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 
-import { EARTH_DISTANCE_FROM_SUN, PLANET_COLORS } from "@/lib/constants";
+import {
+  EARTH_DISTANCE_FROM_SUN,
+  PLANET_COLORS,
+  STARS_AMOUNT,
+} from "@/lib/constants";
+import { Star } from "@/lib/utils";
 import { ContextMenu, SimulationInformationPopover } from "@/components/ui";
 import { usePlanetsContext } from "@/contexts";
 import {
@@ -10,12 +15,15 @@ import {
   useVerlet,
   useBeeman,
 } from "@/hooks";
+import SunImage from "@/assets/img/sun.png";
 
 const App = () => {
   const [canvasDimensions, setCanvasDimensions] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
+
+  const [stars, setStars] = useState<Array<Star>>([]);
 
   const {
     deltaT,
@@ -65,19 +73,36 @@ const App = () => {
   }, [canvasRef, canvasDimensions, clearState]);
 
   useEffect(() => {
+    const tmp = [];
+    for (let i = 0; i < STARS_AMOUNT; i++) {
+      const x = Math.round(Math.random() * canvasDimensions.width);
+      const y = Math.round(Math.random() * canvasDimensions.height);
+      const length = 1 + Math.random() * 2;
+      const opacity = Math.random();
+
+      const star = new Star(x, y, length, opacity);
+
+      tmp.push(star);
+    }
+    setStars(tmp);
+  }, [canvasDimensions]);
+
+  useEffect(() => {
     if (canvasRef.current) {
       const context = canvasRef.current.getContext("2d");
       const centerX = canvasDimensions.width / 2;
       const centerY = canvasDimensions.height / 2;
-      const radius = 15;
+      const radius = 10;
       if (context) {
         requestAnimationFrame(() => {
-          context.fillStyle = "rgba(0, 0, 0, 0.2)";
-          context.fillRect(
+          context.clearRect(
             0,
             0,
             canvasDimensions.width,
             canvasDimensions.height
+          );
+          stars.forEach((star) =>
+            star.draw(context, canvasDimensions.width, canvasDimensions.height)
           );
           planets.forEach((planet, i) => {
             const { x, y } = planet;
@@ -103,7 +128,7 @@ const App = () => {
         });
       }
     }
-  }, [canvasRef, planets, planetsAmount, canvasDimensions]);
+  }, [canvasRef, planets, planetsAmount, canvasDimensions, stars]);
 
   useEffect(() => {
     let idx: number;

@@ -17,7 +17,7 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        primary: "Poppins",
+        primary: "Montserrat",
       },
       colors: {
         border: "hsl(var(--border))",

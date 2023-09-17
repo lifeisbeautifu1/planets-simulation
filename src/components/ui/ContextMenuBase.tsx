@@ -55,8 +55,7 @@ export const ContextMenuBase = () => {
           <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
             <ContextMenuItem onClick={openSimulationInformation}>
-              Simulation Information
-              <ContextMenuShortcut>⇧⌘S</ContextMenuShortcut>
+              Simulation information
             </ContextMenuItem>
             <ContextMenuItem>Simulation configuration</ContextMenuItem>
           </ContextMenuSubContent>
