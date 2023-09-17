@@ -19,9 +19,14 @@ interface IPlanetsState {
 }
 
 type PlanetsAction =
-  | { type: "SET_DELTAT"; deltaT: number }
-  | { type: "SET_PLANETS_AMOUNT"; planetsAmount: number }
-  | { type: "SET_SIMULATION_DURATION"; simulationDuration: number }
+  | {
+      type: "SET_SIMULATION_CONFIGURATION";
+      params: {
+        deltaT: number;
+        planetsAmount: number;
+        simulationDuration: number;
+      };
+    }
   | { type: "RESET_ELAPSED_TIME" }
   | { type: "INCREASE_ELAPSED_TIME"; amount: number }
   | { type: "TOGGLE_CLEAR_STATE" }
@@ -31,22 +36,12 @@ type PlanetsAction =
 
 const planetsReducer = (state: IPlanetsState, action: PlanetsAction) => {
   switch (action.type) {
-    case "SET_DELTAT": {
+    case "SET_SIMULATION_CONFIGURATION": {
       return {
         ...state,
-        deltaT: action.deltaT,
-      };
-    }
-    case "SET_PLANETS_AMOUNT": {
-      return {
-        ...state,
-        planetsAmount: action.planetsAmount,
-      };
-    }
-    case "SET_SIMULATION_DURATION": {
-      return {
-        ...state,
-        simulationDuration: action.simulationDuration,
+        deltaT: action.params.deltaT,
+        planetsAmount: action.params.planetsAmount,
+        simulationDuration: action.params.simulationDuration,
       };
     }
     case "RESET_ELAPSED_TIME": {
@@ -108,7 +103,7 @@ interface IPlanetsContext {
 
 const PlanetsContext = createContext<IPlanetsContext>({
   deltaT: 60 * 60 * 24,
-  planetsAmount: 3,
+  planetsAmount: 5,
   simulationDuration: 60 * 60 * 24 * 365 * 200,
   elapsedTime: 0,
   finishedState: false,
@@ -125,7 +120,7 @@ const PlanetsContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [planetsState, dispatch] = useReducer(planetsReducer, {
     deltaT: 60 * 60 * 24,
-    planetsAmount: 3,
+    planetsAmount: 5,
     simulationDuration: 60 * 60 * 24 * 365 * 20,
     elapsedTime: 0,
     clearState: false,

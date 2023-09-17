@@ -6,7 +6,7 @@ import {
   STARS_AMOUNT,
 } from "@/lib/constants";
 import { Star } from "@/lib/utils";
-import { ContextMenu, SimulationInformationPopover } from "@/components/ui";
+import { ContextMenu, SheetInformation } from "@/components/ui";
 import { usePlanetsContext, useVisualContext } from "@/contexts";
 import {
   usePlanets,
@@ -35,7 +35,7 @@ const App = () => {
     start,
   } = usePlanetsContext();
 
-  const { planets, setPlanets, ...infoPopoverProps } = usePlanets({
+  const { planets, setPlanets, ...sheetProps } = usePlanets({
     planetsAmount,
     clearState,
   });
@@ -123,7 +123,7 @@ const App = () => {
           planets.forEach((planet, i) => {
             const { x, y } = planet;
             if (renderingType === "planets") {
-              const imageSize = i === 0 ? 200 : 50;
+              const imageSize = i === 0 ? 200 : 30 + 10 * i;
               context.drawImage(
                 PlanetsImages[i % PlanetsImages.length],
                 centerX +
@@ -223,7 +223,7 @@ const App = () => {
   return (
     <div className="flex items-center justify-center font-primary">
       <ContextMenu />
-      <SimulationInformationPopover {...infoPopoverProps} />
+      <SheetInformation {...sheetProps} />
       <canvas
         ref={canvasRef}
         width={canvasDimensions.width}

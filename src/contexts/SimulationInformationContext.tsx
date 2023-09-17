@@ -1,16 +1,14 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState } from "react";
 
 interface SimulationInformationContext {
   isSimulationInformationOpen: boolean;
-  openSimulationInformation: () => void;
-  closeSimulationInformation: () => void;
+  setIsSimulationInformationOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const SimulationInformationContext =
   createContext<SimulationInformationContext>({
     isSimulationInformationOpen: false,
-    openSimulationInformation: () => {},
-    closeSimulationInformation: () => {},
+    setIsSimulationInformationOpen: () => {},
   });
 
 const SimulationInformationContextProvider: React.FC<{
@@ -19,20 +17,11 @@ const SimulationInformationContextProvider: React.FC<{
   const [isSimulationInformationOpen, setIsSimulationInformationOpen] =
     useState(false);
 
-  const openSimulationInformation = useCallback(() => {
-    setIsSimulationInformationOpen(true);
-  }, [setIsSimulationInformationOpen]);
-
-  const closeSimulationInformation = useCallback(() => {
-    setIsSimulationInformationOpen(false);
-  }, [setIsSimulationInformationOpen]);
-
   return (
     <SimulationInformationContext.Provider
       value={{
         isSimulationInformationOpen,
-        openSimulationInformation,
-        closeSimulationInformation,
+        setIsSimulationInformationOpen,
       }}
     >
       {children}

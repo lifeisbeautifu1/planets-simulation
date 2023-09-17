@@ -25,9 +25,13 @@ export const ContextMenuBase = () => {
   const { start, stop, clear, finishedState, dispatch, selectedMethod } =
     usePlanetsContext();
 
-  const { openSimulationInformation } = useSimulationInformationContext();
+  const { setIsSimulationInformationOpen } = useSimulationInformationContext();
 
   const { renderingType, setRenderingType } = useVisualContext();
+
+  const openSimulationInformation = useCallback(() => {
+    setIsSimulationInformationOpen(true);
+  }, [setIsSimulationInformationOpen]);
 
   const handleRenderingTypeChange = useCallback<
     React.MouseEventHandler<HTMLDivElement>
@@ -72,9 +76,9 @@ export const ContextMenuBase = () => {
           <ContextMenuSubTrigger inset>More Tools</ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-48">
             <ContextMenuItem onClick={openSimulationInformation}>
-              Simulation information
+              Simulation Information
             </ContextMenuItem>
-            <ContextMenuItem>Simulation configuration</ContextMenuItem>
+            <ContextMenuItem>Planets configuration</ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSeparator />
