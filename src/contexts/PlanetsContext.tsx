@@ -6,6 +6,7 @@ import {
   useEffect,
 } from "react";
 
+import { useSimulationInformationContext } from "@/contexts/SimulationInformationContext";
 import type { SelectedMethod } from "@/lib/types";
 
 interface IPlanetsState {
@@ -103,7 +104,7 @@ interface IPlanetsContext {
 
 const PlanetsContext = createContext<IPlanetsContext>({
   deltaT: 60 * 60 * 24,
-  planetsAmount: 5,
+  planetsAmount: 3,
   simulationDuration: 60 * 60 * 24 * 365 * 200,
   elapsedTime: 0,
   finishedState: false,
@@ -120,7 +121,7 @@ const PlanetsContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [planetsState, dispatch] = useReducer(planetsReducer, {
     deltaT: 60 * 60 * 24,
-    planetsAmount: 5,
+    planetsAmount: 3,
     simulationDuration: 60 * 60 * 24 * 365 * 20,
     elapsedTime: 0,
     clearState: false,
@@ -128,11 +129,19 @@ const PlanetsContextProvider: React.FC<{ children: React.ReactNode }> = ({
     selectedMethod: "Euler-Kramer",
   });
 
+  const { setIsSimulationInformationOpen } = useSimulationInformationContext();
+
   useEffect(() => {
     if (planetsState.elapsedTime > planetsState.simulationDuration) {
+      setIsSimulationInformationOpen(true);
       dispatch({ type: "TOGGLE_FINISHED_STATE" });
     }
-  }, [planetsState.elapsedTime, planetsState.simulationDuration, dispatch]);
+  }, [
+    planetsState.elapsedTime,
+    planetsState.simulationDuration,
+    dispatch,
+    setIsSimulationInformationOpen,
+  ]);
 
   useEffect(() => {
     dispatch({ type: "RESET" });

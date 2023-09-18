@@ -13,14 +13,14 @@ import "@/index.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <PlanetsContextProvider>
-        <SimulationInformationContextProvider>
+      <SimulationInformationContextProvider>
+        <PlanetsContextProvider>
           <VisualContextProvider>
             <App />
             <Toaster />
           </VisualContextProvider>
-        </SimulationInformationContextProvider>
-      </PlanetsContextProvider>
+        </PlanetsContextProvider>
+      </SimulationInformationContextProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

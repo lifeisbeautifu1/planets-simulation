@@ -27,7 +27,8 @@ export const ContextMenuBase = () => {
 
   const { setIsSimulationInformationOpen } = useSimulationInformationContext();
 
-  const { renderingType, setRenderingType } = useVisualContext();
+  const { renderingType, setRenderingType, setIsPlanetsConfigurationOpen } =
+    useVisualContext();
 
   const openSimulationInformation = useCallback(() => {
     setIsSimulationInformationOpen(true);
@@ -41,6 +42,10 @@ export const ContextMenuBase = () => {
     },
     [setRenderingType]
   );
+
+  const openPlanetsConfiguration = useCallback(() => {
+    setIsPlanetsConfigurationOpen(true);
+  }, [setIsPlanetsConfigurationOpen]);
 
   const handleSolvingMethodChange = useCallback<
     React.MouseEventHandler<HTMLDivElement>
@@ -78,7 +83,9 @@ export const ContextMenuBase = () => {
             <ContextMenuItem onClick={openSimulationInformation}>
               Simulation Information
             </ContextMenuItem>
-            <ContextMenuItem>Planets configuration</ContextMenuItem>
+            <ContextMenuItem onClick={openPlanetsConfiguration}>
+              Planets configuration
+            </ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSeparator />

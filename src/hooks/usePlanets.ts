@@ -21,6 +21,21 @@ const usePlanets = ({
     }))
   );
 
+  const [startingPlanets, setStartingPlanets] = useState<Array<Planet>>(
+    new Array(planetsAmount).fill(0).map((_, i) => ({
+      x: EARTH_DISTANCE_FROM_SUN * i,
+      y: 0,
+      vx: 0,
+      vy: i === 0 ? 0 : Math.sqrt((G * M) / EARTH_DISTANCE_FROM_SUN / i),
+      m: i === 0 ? M : EARTH_MASS * i,
+      energy: 0,
+    }))
+  );
+
+  useEffect(() => {
+    setPlanets(startingPlanets);
+  }, [startingPlanets]);
+
   const vX = useMemo(() => {
     const { totalMomentum, totalMass } = planets.reduce(
       (acc, planet) => ({
@@ -64,9 +79,27 @@ const usePlanets = ({
         energy: 0,
       }));
     });
-  }, [planetsAmount, clearState, setPlanets]);
+    setStartingPlanets(() => {
+      return new Array(planetsAmount).fill(0).map((_, i) => ({
+        x: EARTH_DISTANCE_FROM_SUN * i,
+        y: 0,
+        vx: 0,
+        vy: i === 0 ? 0 : Math.sqrt((G * M) / EARTH_DISTANCE_FROM_SUN / i),
+        m: i === 0 ? M : EARTH_MASS * i,
+        energy: 0,
+      }));
+    });
+  }, [planetsAmount, clearState]);
 
-  return { planets, setPlanets, vX, vY, totalEnergy } as const;
+  return {
+    planets,
+    setPlanets,
+    vX,
+    vY,
+    totalEnergy,
+    startingPlanets,
+    setStartingPlanets,
+  } as const;
 };
 
 export default usePlanets;

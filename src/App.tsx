@@ -7,7 +7,11 @@ import {
   STARS_AMOUNT,
 } from "@/lib/constants";
 import { Star } from "@/lib/utils";
-import { ContextMenu, SheetInformation } from "@/components/ui";
+import {
+  ContextMenu,
+  SheetInformation,
+  PlanetsConfigurationDialog,
+} from "@/components/ui";
 import { usePlanetsContext, useVisualContext } from "@/contexts";
 import {
   usePlanets,
@@ -36,7 +40,13 @@ const App = () => {
     start,
   } = usePlanetsContext();
 
-  const { planets, setPlanets, ...sheetProps } = usePlanets({
+  const {
+    planets,
+    setPlanets,
+    startingPlanets,
+    setStartingPlanets,
+    ...sheetProps
+  } = usePlanets({
     planetsAmount,
     clearState,
   });
@@ -58,8 +68,11 @@ const App = () => {
   }, [toast]);
 
   const solveEuler = useEuler({ planets, deltaT, setPlanets });
+
   const solveEulerKramer = useEulerKramer({ planets, deltaT, setPlanets });
+
   const solveVerlet = useVerlet({ planets, deltaT, setPlanets });
+
   const solveBeeman = useBeeman({ planets, deltaT, setPlanets });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -138,7 +151,7 @@ const App = () => {
           planets.forEach((planet, i) => {
             const { x, y } = planet;
             if (renderingType === "planets") {
-              const imageSize = i === 0 ? 200 : 30 + 10 * i;
+              const imageSize = i === 0 ? 200 : 50;
               context.drawImage(
                 PlanetsImages[i % PlanetsImages.length],
                 centerX +
@@ -239,6 +252,10 @@ const App = () => {
     <div className="flex items-center justify-center font-primary">
       <ContextMenu />
       <SheetInformation {...sheetProps} />
+      <PlanetsConfigurationDialog
+        startingPlanets={startingPlanets}
+        setStartingPlanets={setStartingPlanets}
+      />
       <canvas
         ref={canvasRef}
         width={canvasDimensions.width}
