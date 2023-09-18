@@ -89,7 +89,11 @@ const usePlanets = ({
         energy: 0,
       }));
     });
-  }, [planetsAmount, clearState]);
+  }, [planetsAmount]);
+
+  useEffect(() => {
+    setPlanets(startingPlanets);
+  }, [clearState, startingPlanets, setPlanets]);
 
   return {
     planets,
