@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import type { Planet } from "@/lib/types";
-import { G, M } from "@/lib/constants";
+import { G } from "@/lib/constants";
 
 const useEulerKramer = ({
   planets,
