@@ -33,9 +33,9 @@ const useVerlet = ({
           aX += (G * p.m * (p.x - x)) / R ** 3;
           aY += (G * p.m * (p.y - y)) / R ** 3;
           potentialEnergy -= (G * p.m * m) / R;
-          kineticEnergy = (m * (G * p.m)) / R / 2;
         }
       });
+      kineticEnergy = (m * (vx ** 2 + vy ** 2)) / 2;
       if (X.current[index].length >= 2) {
         const updatedX =
           2 * X.current[index][X.current[index].length - 1] -

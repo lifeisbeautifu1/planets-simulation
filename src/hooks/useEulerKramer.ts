@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import type { Planet } from "@/lib/types";
-import { G } from "@/lib/constants";
+import { G, M } from "@/lib/constants";
 
 const useEulerKramer = ({
   planets,
@@ -26,9 +26,9 @@ const useEulerKramer = ({
           aX += (G * p.m * (p.x - x)) / R ** 3;
           aY += (G * p.m * (p.y - y)) / R ** 3;
           potentialEnergy -= (G * p.m * m) / R;
-          kineticEnergy = (m * (G * p.m)) / R / 2;
         }
       });
+      kineticEnergy = (m * (vx ** 2 + vy ** 2)) / 2;
       const updatedVx = vx + aX * deltaT;
       const updatedVy = vy + aY * deltaT;
       updatedPlanets[index] = {

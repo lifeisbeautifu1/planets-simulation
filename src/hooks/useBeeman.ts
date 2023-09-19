@@ -29,9 +29,9 @@ const useBeeman = ({
           accX += (G * p.m * (p.x - x)) / R ** 3;
           accY += (G * p.m * (p.y - y)) / R ** 3;
           potentialEnergy -= (G * p.m * m) / R;
-          kineticEnergy = (m * (G * p.m)) / R / 2;
         }
       });
+      kineticEnergy = (m * (vx ** 2 + vy ** 2)) / 2;
       if (aX.current[index].length >= 2) {
         const updatedX =
           x +
