@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 
 import type { Planet } from "@/lib/types";
-import { G } from "@/lib/constants";
+import { G, SPEED_OF_LIGHT } from "@/lib/constants";
 
 const useBeeman = ({
   planets,
@@ -18,7 +18,7 @@ const useBeeman = ({
   const solveBeeman = useCallback(() => {
     const updatedPlanets = [...planets];
     planets.forEach((planet, index) => {
-      const { x, y, vx, vy, m } = planet;
+      const { x, y, vx, vy, m, m0 } = planet;
       let accX = 0,
         accY = 0,
         potentialEnergy = 0,
@@ -67,6 +67,7 @@ const useBeeman = ({
           vy: updatedVy,
           x: updatedX,
           y: updatedY,
+          m: m0 / Math.sqrt(1 - (vx ** 2 + vy ** 2) / SPEED_OF_LIGHT ** 2),
           energy: kineticEnergy + potentialEnergy,
         };
       } else {
@@ -80,6 +81,7 @@ const useBeeman = ({
           vy: updatedVy,
           x: updatedX,
           y: updatedY,
+          m: m0 / Math.sqrt(1 - (vx ** 2 + vy ** 2) / SPEED_OF_LIGHT ** 2),
           energy: kineticEnergy + potentialEnergy,
         };
       }

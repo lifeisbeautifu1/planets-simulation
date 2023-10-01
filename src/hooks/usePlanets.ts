@@ -16,6 +16,7 @@ const usePlanets = ({
       y: 0,
       vx: 0,
       vy: i === 0 ? 0 : Math.sqrt((G * M) / EARTH_DISTANCE_FROM_SUN / i),
+      m0: i === 0 ? M : EARTH_MASS * i,
       m: i === 0 ? M : EARTH_MASS * i,
       energy: 0,
     }))
@@ -27,6 +28,7 @@ const usePlanets = ({
       y: 0,
       vx: 0,
       vy: i === 0 ? 0 : Math.sqrt((G * M) / EARTH_DISTANCE_FROM_SUN / i),
+      m0: i === 0 ? M : EARTH_MASS * i,
       m: i === 0 ? M : EARTH_MASS * i,
       energy: 0,
     }))
@@ -75,6 +77,7 @@ const usePlanets = ({
         y: 0,
         vx: 0,
         vy: i === 0 ? 0 : Math.sqrt((G * M) / EARTH_DISTANCE_FROM_SUN / i),
+        m0: i === 0 ? M : EARTH_MASS * i,
         m: i === 0 ? M : EARTH_MASS * i,
         energy: 0,
       }));
@@ -85,6 +88,7 @@ const usePlanets = ({
         y: 0,
         vx: 0,
         vy: i === 0 ? 0 : Math.sqrt((G * M) / EARTH_DISTANCE_FROM_SUN / i),
+        m0: i === 0 ? M : EARTH_MASS * i,
         m: i === 0 ? M : EARTH_MASS * i,
         energy: 0,
       }));

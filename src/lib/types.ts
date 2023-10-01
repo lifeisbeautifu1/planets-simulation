@@ -1,6 +1,7 @@
 export interface Planet {
   x: number;
   y: number;
+  m0: number;
   m: number;
   vx: number;
   vy: number;
