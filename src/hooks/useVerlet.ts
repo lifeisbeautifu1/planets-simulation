@@ -22,7 +22,7 @@ const useVerlet = ({
   const solveVerlet = useCallback(() => {
     const updatedPlanets = [...planets];
     planets.forEach((planet, index) => {
-      const { x, y, vx, vy, m, m0 } = planet;
+      const { x, y, vx, vy, m, m0, q, B } = planet;
       let aX = 0,
         aY = 0,
         potentialEnergy = 0,
@@ -36,6 +36,8 @@ const useVerlet = ({
         }
       });
       kineticEnergy = (m * (vx ** 2 + vy ** 2)) / 2;
+      aX += (Math.abs(q) * vx * B) / m;
+      aY += (Math.abs(q) * vy * B) / m;
       if (X.current[index].length >= 2) {
         const updatedX =
           2 * X.current[index][X.current[index].length - 1] -

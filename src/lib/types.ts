@@ -6,6 +6,8 @@ export interface Planet {
   vx: number;
   vy: number;
   energy: number;
+  q: number;
+  B: number;
 }
 
 export type SelectedMethod = "Euler" | "Euler-Kramer" | "Verlet" | "Beeman";

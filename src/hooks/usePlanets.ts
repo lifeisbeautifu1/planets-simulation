@@ -19,6 +19,8 @@ const usePlanets = ({
       m0: i === 0 ? M : EARTH_MASS * i,
       m: i === 0 ? M : EARTH_MASS * i,
       energy: 0,
+      q: i === 0 ? -4 * 10 ** 19 : -3 * 10 ** 5,
+      B: i === 0 ? 10 ** -4 : 7 * 10 ** -5,
     }))
   );
 
@@ -31,6 +33,8 @@ const usePlanets = ({
       m0: i === 0 ? M : EARTH_MASS * i,
       m: i === 0 ? M : EARTH_MASS * i,
       energy: 0,
+      q: i === 0 ? -4 * 10 ** 19 : -3 * 10 ** 5,
+      B: i === 0 ? 10 ** -4 : 7 * 10 ** -5,
     }))
   );
 
@@ -80,6 +84,8 @@ const usePlanets = ({
         m0: i === 0 ? M : EARTH_MASS * i,
         m: i === 0 ? M : EARTH_MASS * i,
         energy: 0,
+        q: i === 0 ? -4 * 10 ** 19 : -3 * 10 ** 5,
+        B: i === 0 ? 10 ** -4 : 7 * 10 ** -5,
       }));
     });
     setStartingPlanets(() => {
@@ -91,6 +97,8 @@ const usePlanets = ({
         m0: i === 0 ? M : EARTH_MASS * i,
         m: i === 0 ? M : EARTH_MASS * i,
         energy: 0,
+        q: i === 0 ? -4 * 10 ** 19 : -3 * 10 ** 5,
+        B: i === 0 ? 10 ** -4 : 7 * 10 ** -5,
       }));
     });
   }, [planetsAmount]);
