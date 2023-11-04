@@ -1,7 +1,7 @@
 import { useCallback, useRef } from "react";
 
 import type { Planet } from "@/lib/types";
-import { G, SPEED_OF_LIGHT } from "@/lib/constants";
+import { G } from "@/lib/constants";
 
 const useVerlet = ({
   planets,
@@ -22,7 +22,7 @@ const useVerlet = ({
   const solveVerlet = useCallback(() => {
     const updatedPlanets = [...planets];
     planets.forEach((planet, index) => {
-      const { x, y, vx, vy, m, m0, q, B } = planet;
+      const { x, y, vx, vy, m } = planet;
       let aX = 0,
         aY = 0,
         potentialEnergy = 0,
@@ -36,8 +36,7 @@ const useVerlet = ({
         }
       });
       kineticEnergy = (m * (vx ** 2 + vy ** 2)) / 2;
-      aX += (Math.abs(q) * vx * B) / m;
-      aY += (Math.abs(q) * vy * B) / m;
+
       if (X.current[index].length >= 2) {
         const updatedX =
           2 * X.current[index][X.current[index].length - 1] -
@@ -59,7 +58,6 @@ const useVerlet = ({
           vy: updatedVy,
           x: updatedX,
           y: updatedY,
-          m: m0 / Math.sqrt(1 - (vx ** 2 + vy ** 2) / SPEED_OF_LIGHT ** 2),
           energy: kineticEnergy + potentialEnergy,
         };
         X.current[index].push(updatedX);
@@ -75,7 +73,6 @@ const useVerlet = ({
           vy: updatedVy,
           x: updatedX,
           y: updatedY,
-          m: m0 / Math.sqrt(1 - (vx ** 2 + vy ** 2) / SPEED_OF_LIGHT ** 2),
           energy: kineticEnergy + potentialEnergy,
         };
         X.current[index].push(updatedX);

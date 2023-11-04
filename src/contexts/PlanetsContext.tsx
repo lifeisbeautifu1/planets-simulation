@@ -104,8 +104,8 @@ interface IPlanetsContext {
 
 const PlanetsContext = createContext<IPlanetsContext>({
   deltaT: 60 * 60 * 24,
-  planetsAmount: 3,
-  simulationDuration: 60 * 60 * 24 * 365 * 200,
+  planetsAmount: 2,
+  simulationDuration: 60 * 60 * 24 * 365 * 20,
   elapsedTime: 0,
   finishedState: false,
   clearState: false,
@@ -121,7 +121,7 @@ const PlanetsContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [planetsState, dispatch] = useReducer(planetsReducer, {
     deltaT: 60 * 60 * 24,
-    planetsAmount: 3,
+    planetsAmount: 2,
     simulationDuration: 60 * 60 * 24 * 365 * 20,
     elapsedTime: 0,
     clearState: false,

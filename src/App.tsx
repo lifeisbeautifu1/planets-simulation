@@ -122,7 +122,7 @@ const App = () => {
       const context = canvasRef.current.getContext("2d");
       const centerX = canvasDimensions.width / 2;
       const centerY = canvasDimensions.height / 2;
-      const radius = 10;
+      const radius = 5;
       if (context) {
         requestAnimationFrame(() => {
           if (renderingType === "planets") {
@@ -178,7 +178,7 @@ const App = () => {
                   (y * canvasDimensions.height) /
                     EARTH_DISTANCE_FROM_SUN /
                     (planetsAmount * 1.75),
-                i === 0 ? 30 : radius,
+                i === 0 ? 15 : radius,
                 0,
                 2 * Math.PI,
                 true

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import type { Planet } from "@/lib/types";
-import { G, SPEED_OF_LIGHT } from "@/lib/constants";
+import { G } from "@/lib/constants";
 
 const useEuler = ({
   planets,
@@ -15,7 +15,7 @@ const useEuler = ({
   const solveEuler = useCallback(() => {
     const updatedPlanets = [...planets];
     planets.forEach((planet, index) => {
-      const { x, y, vx, vy, m, m0, q, B } = planet;
+      const { x, y, vx, vy, m } = planet;
       let aX = 0,
         aY = 0,
         potentialEnergy = 0,
@@ -29,15 +29,13 @@ const useEuler = ({
         }
       });
       kineticEnergy = (m * (vx ** 2 + vy ** 2)) / 2;
-      aX += (Math.abs(q) * vx * B) / m;
-      aY += (Math.abs(q) * vy * B) / m;
+
       updatedPlanets[index] = {
         ...planet,
         vx: vx + aX * deltaT,
         vy: vy + aY * deltaT,
         x: x + vx * deltaT,
         y: y + vy * deltaT,
-        m: m0 / Math.sqrt(1 - (vx ** 2 + vy ** 2) / SPEED_OF_LIGHT ** 2),
         energy: kineticEnergy + potentialEnergy,
       };
     });

@@ -83,7 +83,7 @@ const useBeeman = ({
           vy: updatedVy,
           x: updatedX,
           y: updatedY,
-          m: m0 / Math.sqrt(1 - (vx ** 2 + vy ** 2) / SPEED_OF_LIGHT ** 2),
+          // m: m0 / Math.sqrt(1 - (vx ** 2 + vy ** 2) / SPEED_OF_LIGHT ** 2),
           energy: kineticEnergy + potentialEnergy,
         };
       }
